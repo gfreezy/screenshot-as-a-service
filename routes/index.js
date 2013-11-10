@@ -7,6 +7,8 @@ var request = require('request');
 module.exports = function(app, useCors) {
   var rasterizerService = app.settings.rasterizerService;
   var fileCleanerService = app.settings.fileCleanerService;
+  var user = app.settings.user;
+  var weibo = app.settings.weibo;
 
   // routes
   app.get('/', function(req, res, next) {
@@ -58,6 +60,7 @@ module.exports = function(app, useCors) {
   }
 
   var processImageUsingRasterizer = function(rasterizerOptions, filePath, res, url, callback) {
+    postImageToWeibo(filePath);
     if (url) {
       // asynchronous
       res.send('Will post screenshot to ' + url + ' when processed');
@@ -113,4 +116,20 @@ module.exports = function(app, useCors) {
     });
   }
 
+  var postImageToWeibo = function(imagePath, callback) {
+    console.log(imagePath);
+    var fileStream = fs.createReadStream(imagePath);
+    weibo.upload(user, 'test', {
+      data:  fileStream,
+      name: imagePath,
+      content_type: 'image/png'
+    }, function(err, status) {
+      // callback(err, status);
+      console.log(status);
+      if (err) {
+        console.error('weibo error',err);
+        return;
+      }
+    });
+  }
 };

@@ -4,7 +4,11 @@ rasterizer:
   path: '/tmp/'        # where the screenshot files are stored
   viewport: '1024x600' # browser window size. Height frows according to the content
 cache:
-  lifetime: 60000      # one minute, set to 0 for no cache
+  lifetime: 6000      # one minute, set to 0 for no cache
 server:
   port: 3000           # main service port
   useCors: false       # enable CORS support
+weibo:
+  access_token: '2.00R3JhACj8wfuB4beefb80dd3uaClB'
+  app_key: '1753603767'
+  app_sign: '51eccdf6f40be550bcbe3aecd55e0ac8'
