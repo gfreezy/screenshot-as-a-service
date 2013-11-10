@@ -9,6 +9,6 @@ server:
   port: 3000           # main service port
   useCors: false       # enable CORS support
 weibo:
-  access_token: '2.00R3JhACj8wfuB4beefb80dd3uaClB'
+  access_token: '2.00ZK5jPEj8wfuB3a995714d60yt5eV'
   app_key: '1753603767'
   app_sign: '51eccdf6f40be550bcbe3aecd55e0ac8'
