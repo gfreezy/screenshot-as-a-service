@@ -3,6 +3,7 @@ var join = require('path').join;
 var fs = require('fs');
 var path = require('path');
 var request = require('request');
+var moment = require('moment');
 
 module.exports = function(app, useCors) {
   var rasterizerService = app.settings.rasterizerService;
@@ -60,7 +61,6 @@ module.exports = function(app, useCors) {
   }
 
   var processImageUsingRasterizer = function(rasterizerOptions, filePath, res, url, callback) {
-    postImageToWeibo(filePath);
     if (url) {
       // asynchronous
       res.send('Will post screenshot to ' + url + ' when processed');
@@ -89,6 +89,10 @@ module.exports = function(app, useCors) {
   }
 
   var postImageToUrl = function(imagePath, url, callback) {
+    if (url === 'http://weibo.com') {
+      postImageToWeibo(imagePath, callback);
+      return;
+    }
     console.log('Streaming image to %s', url);
     var fileStream = fs.createReadStream(imagePath);
     fileStream.on('end', function() {
@@ -117,17 +121,22 @@ module.exports = function(app, useCors) {
   }
 
   var postImageToWeibo = function(imagePath, callback) {
-    console.log(imagePath);
     var fileStream = fs.createReadStream(imagePath);
-    weibo.upload(user, 'test', {
+    fileStream.on('end', function() {
+      fileCleanerService.addFile(imagePath);
+    });
+    fileStream.on('error', function(err){
+      console.log('Error while reading file: %s', err.message);
+      callback(err);
+    });
+    weibo.upload(user, moment().format('LLLL'), {
       data:  fileStream,
       name: imagePath,
       content_type: 'image/png'
     }, function(err, status) {
-      // callback(err, status);
-      console.log(status);
+      console.log('Upload image to Weibo');
       if (err) {
-        console.error('weibo error',err);
+        callback(err);
         return;
       }
     });
